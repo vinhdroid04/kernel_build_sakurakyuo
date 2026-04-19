@@ -36,7 +36,11 @@ jobs:
           echo "=== Tích hợp KernelSU v0.9.5 ==="
           curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s v0.9.5
           echo "=== KernelSU đã được patch ==="
-
+      - name: Check available defconfigs
+        run: |
+          cd kernel-source
+          ls -1 arch/arm64/configs/*defconfig
+          
       - name: Build kernel
         run: |
           export KBUILD_BUILD_USER="zclkkk"
