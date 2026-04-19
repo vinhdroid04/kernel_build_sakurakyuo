@@ -50,9 +50,22 @@ jobs:
           export KBUILD_BUILD_USER="vinhdroid04"
           export KBUILD_BUILD_HOST="github"
           export PATH=$GITHUB_WORKSPACE/clang/bin:$PATH
-          args="ARCH=arm64 O=../out ${{ env.BUILD_ARGS }} CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=$GITHUB_WORKSPACE/aarch64-linux-android-4.9/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=$GITHUB_WORKSPACE/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-"
+          
+          args="ARCH=arm64 O=../out ${{ env.BUILD_ARGS }} CLANG_TRIPLE=aarch64-linux-gnu- \
+                CROSS_COMPILE=$GITHUB_WORKSPACE/aarch64-linux-android-4.9/bin/aarch64-linux-android- \
+                CROSS_COMPILE_ARM32=$GITHUB_WORKSPACE/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-"
+          
           cd kernel-source
-          make ${args} sirius_defconfig || make ${args} xmsirius_defconfig || make ${args} sdm710_defconfig
+          
+          echo "=== Thử các defconfig cho sirius ==="
+          
+          # Thử lần lượt các defconfig phổ biến cho Mi 8 SE
+          make ${args} sirius_defconfig && echo "✓ Dùng sirius_defconfig" || \
+          make ${args} xmsirius_defconfig && echo "✓ Dùng xmsirius_defconfig" || \
+          make ${args} sdm710_defconfig && echo "✓ Dùng sdm710_defconfig" || \
+          echo "❌ Không tìm thấy defconfig nào phù hợp!" && exit 1
+          
+          echo "=== Bắt đầu compile kernel ==="
           make -j$(($(getconf _NPROCESSORS_ONLN) * 2)) ${args}
 
       - name: Package kernel
