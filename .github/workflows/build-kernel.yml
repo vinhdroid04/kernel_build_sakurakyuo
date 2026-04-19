@@ -57,21 +57,20 @@ jobs:
           
           cd kernel-source
           
-          echo "=== DANH SÁCH DEFCONFIG THỰC TẾ ==="
+          echo "=== DANH SÁCH DEFCONFIG MỚI ==="
           ls -1 arch/arm64/configs/ | grep -E "defconfig|config"
           echo "===================================="
           
           echo "=== Thử defconfig cho sirius ==="
           
-          # Thử các defconfig phổ biến nhất cho Mi 8 SE
           if make ${args} sirius_defconfig; then
             echo "✓ Sử dụng sirius_defconfig"
           elif make ${args} xmsirius_defconfig; then
             echo "✓ Sử dụng xmsirius_defconfig"
           elif make ${args} defconfig; then
-            echo "✓ Sử dụng defconfig (generic)"
+            echo "✓ Sử dụng defconfig"
           else
-            echo "❌ Không tìm thấy defconfig phù hợp nào!"
+            echo "❌ Vẫn không tìm thấy defconfig phù hợp!"
             exit 1
           fi
           
