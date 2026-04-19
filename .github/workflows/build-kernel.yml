@@ -57,15 +57,25 @@ jobs:
           
           cd kernel-source
           
-          echo "=== Thử các defconfig cho sirius ==="
+          echo "=== DANH SÁCH DEFCONFIG THỰC TẾ ==="
+          ls -1 arch/arm64/configs/ | grep -E "defconfig|config"
+          echo "===================================="
           
-          # Thử lần lượt các defconfig phổ biến cho Mi 8 SE
-          make ${args} sirius_defconfig && echo "✓ Dùng sirius_defconfig" || \
-          make ${args} xmsirius_defconfig && echo "✓ Dùng xmsirius_defconfig" || \
-          make ${args} sdm710_defconfig && echo "✓ Dùng sdm710_defconfig" || \
-          echo "❌ Không tìm thấy defconfig nào phù hợp!" && exit 1
+          echo "=== Thử defconfig cho sirius ==="
           
-          echo "=== Bắt đầu compile kernel ==="
+          # Thử các defconfig phổ biến nhất cho Mi 8 SE
+          if make ${args} sirius_defconfig; then
+            echo "✓ Sử dụng sirius_defconfig"
+          elif make ${args} xmsirius_defconfig; then
+            echo "✓ Sử dụng xmsirius_defconfig"
+          elif make ${args} defconfig; then
+            echo "✓ Sử dụng defconfig (generic)"
+          else
+            echo "❌ Không tìm thấy defconfig phù hợp nào!"
+            exit 1
+          fi
+          
+          echo "=== Bắt đầu compile kernel (có thể mất 15-30 phút) ==="
           make -j$(($(getconf _NPROCESSORS_ONLN) * 2)) ${args}
 
       - name: Package kernel
